@@ -104,12 +104,12 @@ header.site{display:flex;align-items:center;justify-content:space-between;paddin
 .tarot-deck-hint{color:var(--color-text-faint);font-size:.85rem;text-align:center;max-width:40ch;}
 
 .tarot-overlay{position:fixed;inset:0;background:oklch(0.05 0 0 / 0);z-index:200;display:flex;align-items:center;justify-content:center;padding:clamp(1rem,4vw,2rem);opacity:0;pointer-events:none;transition:background 420ms cubic-bezier(0.16,1,0.3,1),opacity 420ms cubic-bezier(0.16,1,0.3,1);}
-.tarot-overlay.is-active{background:oklch(0.05 0 0 / 0.72);opacity:1;pointer-events:auto;}
+.tarot-overlay.is-active{background:oklch(0.03 0 0 / 0.9);opacity:1;pointer-events:auto;}
 .tarot-overlay-inner{display:flex;flex-direction:column;align-items:center;gap:1.75rem;max-width:640px;width:100%;transform:scale(0.85) translateY(10px);opacity:0;transition:transform 480ms cubic-bezier(0.16,1,0.3,1),opacity 480ms cubic-bezier(0.16,1,0.3,1);}
 .tarot-overlay.is-active .tarot-overlay-inner{transform:scale(1) translateY(0);opacity:1;}
 .tarot-card-visual{width:min(230px,52vw);border-radius:var(--radius-lg);box-shadow:0 24px 60px oklch(0 0 0 / 0.5);border:1px solid oklch(1 0 0 / 0.15);}
 .tarot-overlay-name{font-family:var(--font-display);font-size:clamp(1.6rem,1.2rem + 2vw,2.4rem);color:#fff;text-align:center;}
-.tarot-overlay-text{color:oklch(0.92 0 0);text-align:center;font-size:clamp(1rem,0.95rem + 0.3vw,1.15rem);max-width:56ch;line-height:1.65;}
+.tarot-overlay-text{color:oklch(0.97 0 0);text-align:center;font-size:clamp(1rem,0.95rem + 0.3vw,1.15rem);max-width:56ch;line-height:1.65;text-shadow:0 2px 12px oklch(0 0 0 / 0.6);}
 .tarot-overlay-close{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:var(--radius-full);background:oklch(1 0 0 / 0.12);color:#fff;font-weight:600;font-size:.9rem;border:1px solid oklch(1 0 0 / 0.25);}
 .tarot-overlay-close:hover{background:oklch(1 0 0 / 0.2);}
 .tarot-overlay-draw-again{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:var(--radius-full);background:var(--color-primary);color:#fff;font-weight:700;font-size:.9rem;}
