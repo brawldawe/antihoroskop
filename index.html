@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antihoroskop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=boska@500,700&f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+<style>
+/* Art direction: Antihoroskop -> sarkastický, temně komický protipól klasického horoskopu
+   Palette: chladná, popelavě tmavá základna s jedovatě rudým akcentem (varovná, ironická barva)
+   Typography: Boska (display, groteskně dramatický serif) + General Sans (body, čistý neutrální grotesk)
+   Density: balanced, s dramatičtějším hero */
+:root, [data-theme="light"]{
+  --color-bg:#f2efe9;
+  --color-surface:#ffffff;
+  --color-surface-2:#f9f7f2;
+  --color-surface-offset:#ece7de;
+  --color-surface-offset-2:#e2dcd0;
+  --color-surface-dynamic:#d8d1c2;
+  --color-divider:#d9d2c4;
+  --color-border:#cfc7b6;
+  --color-text:#221f1a;
+  --color-text-muted:#6b6459;
+  --color-text-faint:#a49b8a;
+  --color-text-inverse:#f8f5ee;
+  --color-primary:#8a1f1f;
+  --color-primary-hover:#6c1616;
+  --color-primary-active:#4f0f0f;
+  --color-primary-highlight:#e3cccb;
+  --radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --transition-interactive:180ms cubic-bezier(0.16,1,0.3,1);
+  --shadow-sm:0 1px 2px oklch(0.2 0.02 40 / 0.08);
+  --shadow-md:0 4px 12px oklch(0.2 0.02 40 / 0.10);
+  --shadow-lg:0 16px 40px oklch(0.2 0.02 40 / 0.16);
+  --content-narrow:640px;--content-default:960px;--content-wide:1200px;
+  --font-display:'Boska','Georgia',serif;
+  --font-body:'General Sans','Helvetica Neue',sans-serif;
+}
+[data-theme="dark"]{
+  --color-bg:#15130f;
+  --color-surface:#1c1a15;
+  --color-surface-2:#211e18;
+  --color-surface-offset:#26221b;
+  --color-surface-offset-2:#2d281f;
+  --color-surface-dynamic:#372f24;
+  --color-divider:#2c281f;
+  --color-border:#3a3427;
+  --color-text:#ece6d9;
+  --color-text-muted:#a89d89;
+  --color-text-faint:#6f6653;
+  --color-text-inverse:#221f1a;
+  --color-primary:#d9564f;
+  --color-primary-hover:#e77770;
+  --color-primary-active:#f29a94;
+  --color-primary-highlight:#3a2422;
+  --shadow-sm:0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-md:0 4px 12px oklch(0 0 0 / 0.4);
+  --shadow-lg:0 16px 40px oklch(0 0 0 / 0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:none;text-size-adjust:none;-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+body{min-height:100dvh;line-height:1.6;font-family:var(--font-body);font-size:clamp(1rem,0.95rem + 0.25vw,1.125rem);color:var(--color-text);background:var(--color-bg);transition:background var(--transition-interactive),color var(--transition-interactive);}
+img,svg{display:block;max-width:100%;}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;line-height:1.1;font-weight:700;}
+p{text-wrap:pretty;max-width:70ch;}
+a{color:inherit;}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;transition:color var(--transition-interactive),background var(--transition-interactive),border-color var(--transition-interactive),box-shadow var(--transition-interactive),transform var(--transition-interactive);}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm);}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+
+.wrap{max-width:var(--content-default);margin-inline:auto;padding-inline:clamp(1rem,4vw,2rem);}
+
+header.site{display:flex;align-items:center;justify-content:space-between;padding-block:1.25rem;position:sticky;top:0;z-index:50;background:color-mix(in oklab, var(--color-bg) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--color-divider);}
+.logo{display:flex;align-items:center;gap:.6rem;font-family:var(--font-display);font-size:1.25rem;font-weight:700;letter-spacing:-0.01em;}
+.logo svg{width:30px;height:30px;color:var(--color-primary);}
+.theme-toggle{width:40px;height:40px;border-radius:var(--radius-full);display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);color:var(--color-text-muted);background:var(--color-surface);box-shadow:var(--shadow-sm);flex-shrink:0;}
+.theme-toggle:hover{color:var(--color-primary);border-color:var(--color-primary);}
+
+.site-nav{display:flex;align-items:center;}
+.top-left-controls{position:fixed;top:1rem;left:1rem;z-index:100;display:flex;align-items:center;gap:.6rem;}
+.tarot-nav-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1.1rem;border-radius:var(--radius-full);border:1px solid var(--color-border);color:var(--color-text-muted);font-size:.85rem;font-weight:600;background:var(--color-surface-2);box-shadow:var(--shadow-sm);}
+.tarot-nav-btn:hover{color:var(--color-primary);border-color:var(--color-primary);background:var(--color-primary-highlight);}
+.tarot-nav-btn svg{color:var(--color-primary);flex-shrink:0;}
+
+#tarotView{display:none;}
+.tarot-hero{padding-block:clamp(3rem,7vw,5rem) clamp(1.5rem,4vw,2rem);}
+.tarot-back{display:inline-flex;align-items:center;gap:.5rem;font-size:.9rem;font-weight:600;color:var(--color-text-muted);margin-bottom:1.5rem;}
+.tarot-back:hover{color:var(--color-primary);}
+.tarot-hero h1{font-size:clamp(2.25rem,1rem + 4.5vw,4rem);margin-bottom:1rem;}
+.tarot-hero h1 em{font-style:italic;color:var(--color-primary);}
+.tarot-hero p.lede{color:var(--color-text-muted);max-width:60ch;font-size:clamp(1rem,0.95rem + 0.3vw,1.15rem);}
+
+.tarot-draw-section{padding-block:0 clamp(3rem,7vw,5rem);position:relative;}
+.tarot-stage{position:relative;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;}
+
+.tarot-draw-btn{display:inline-flex;align-items:center;gap:.65rem;padding:1rem 2rem;border-radius:var(--radius-full);background:var(--color-primary);color:var(--color-text-inverse);font-weight:700;font-size:1rem;box-shadow:var(--shadow-md);transition:transform var(--transition-interactive),box-shadow var(--transition-interactive),background var(--transition-interactive);}
+.tarot-draw-btn:hover{background:var(--color-primary-hover);transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.tarot-draw-btn:active{transform:translateY(0);}
+.tarot-draw-btn svg{width:20px;height:20px;flex-shrink:0;}
+
+.tarot-deck-hint{color:var(--color-text-faint);font-size:.85rem;text-align:center;max-width:40ch;}
+
+.tarot-overlay{position:fixed;inset:0;background:oklch(0.05 0 0 / 0);z-index:200;display:flex;align-items:center;justify-content:center;padding:clamp(1rem,4vw,2rem);opacity:0;pointer-events:none;transition:background 420ms cubic-bezier(0.16,1,0.3,1),opacity 420ms cubic-bezier(0.16,1,0.3,1);}
+.tarot-overlay.is-active{background:oklch(0.05 0 0 / 0.72);opacity:1;pointer-events:auto;}
+.tarot-overlay-inner{display:flex;flex-direction:column;align-items:center;gap:1.75rem;max-width:640px;width:100%;transform:scale(0.85) translateY(10px);opacity:0;transition:transform 480ms cubic-bezier(0.16,1,0.3,1),opacity 480ms cubic-bezier(0.16,1,0.3,1);}
+.tarot-overlay.is-active .tarot-overlay-inner{transform:scale(1) translateY(0);opacity:1;}
+.tarot-card-visual{width:min(230px,52vw);border-radius:var(--radius-lg);box-shadow:0 24px 60px oklch(0 0 0 / 0.5);border:1px solid oklch(1 0 0 / 0.15);}
+.tarot-overlay-name{font-family:var(--font-display);font-size:clamp(1.6rem,1.2rem + 2vw,2.4rem);color:#fff;text-align:center;}
+.tarot-overlay-text{color:oklch(0.92 0 0);text-align:center;font-size:clamp(1rem,0.95rem + 0.3vw,1.15rem);max-width:56ch;line-height:1.65;}
+.tarot-overlay-close{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:var(--radius-full);background:oklch(1 0 0 / 0.12);color:#fff;font-weight:600;font-size:.9rem;border:1px solid oklch(1 0 0 / 0.25);}
+.tarot-overlay-close:hover{background:oklch(1 0 0 / 0.2);}
+.tarot-overlay-draw-again{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:var(--radius-full);background:var(--color-primary);color:#fff;font-weight:700;font-size:.9rem;}
+.tarot-overlay-draw-again:hover{background:var(--color-primary-hover);}
+.tarot-overlay-actions{display:flex;gap:.85rem;flex-wrap:wrap;justify-content:center;}
+.tarot-overlay-footnote{color:oklch(0.65 0 0);font-size:.78rem;text-align:center;max-width:48ch;}
+
+@media (prefers-reduced-motion:reduce){
+  .tarot-overlay,.tarot-overlay-inner{transition:none;}
+}
+
+.hero{padding-block:clamp(3rem,8vw,6rem) clamp(2rem,5vw,3.5rem);}
+.hero .kicker{color:var(--color-primary);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:0.8rem;margin-bottom:1rem;}
+.hero h1{font-size:clamp(3rem,0.5rem + 8vw,6.5rem);margin-bottom:1.25rem;}
+.hero h1 em{font-style:italic;color:var(--color-primary);}
+.hero p.lede{font-size:clamp(1.05rem,1rem + 0.4vw,1.3rem);color:var(--color-text-muted);max-width:56ch;}
+
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);}
+
+.form-section{padding-block:1rem clamp(2.5rem,6vw,4rem);}
+.form-card{padding:clamp(1.5rem,4vw,2.5rem);display:grid;gap:1.5rem;}
+.form-row{display:grid;gap:.5rem;}
+.form-row label{font-size:0.85rem;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.04em;}
+.form-row input[type=date]{padding:.85rem 1rem;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text);font-size:1rem;}
+.gender-group{display:flex;gap:.6rem;flex-wrap:wrap;}
+.gender-btn{padding:.7rem 1.2rem;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-surface-2);font-size:.95rem;font-weight:500;}
+.gender-btn[aria-pressed="true"]{background:var(--color-primary);color:var(--color-text-inverse);border-color:var(--color-primary);}
+.gender-btn:hover:not([aria-pressed="true"]){border-color:var(--color-primary);color:var(--color-primary);}
+.submit-btn{justify-self:start;padding:.9rem 1.8rem;border-radius:var(--radius-full);background:var(--color-primary);color:var(--color-text-inverse);font-weight:600;font-size:1rem;box-shadow:var(--shadow-sm);}
+.submit-btn:hover{background:var(--color-primary-hover);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.error-msg{color:var(--color-primary);font-size:.9rem;display:none;}
+
+.result-section{padding-block:1rem clamp(3rem,7vw,5rem);display:none;}
+.result-card{padding:clamp(1.75rem,5vw,3rem);position:relative;overflow:hidden;}
+.result-top{display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.sign-badge{width:64px;height:64px;border-radius:var(--radius-full);background:var(--color-primary-highlight);color:var(--color-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sign-badge svg{width:34px;height:34px;}
+.result-top h2{font-size:clamp(1.5rem,1.2rem + 1vw,2.25rem);margin-bottom:.15rem;}
+.result-meta{color:var(--color-text-muted);font-size:.9rem;}
+.month-tag{margin-left:auto;font-size:.8rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--color-primary);border:1px solid var(--color-primary);border-radius:var(--radius-full);padding:.35rem .8rem;}
+.verdict{font-family:var(--font-display);font-size:clamp(1.3rem,1.1rem + 1vw,1.9rem);color:var(--color-primary);margin-bottom:1.5rem;font-weight:700;}
+.category-list{display:grid;gap:1.1rem;}
+.category{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:start;padding-block:.9rem;border-top:1px solid var(--color-divider);}
+.category:first-child{border-top:none;padding-top:0;}
+.category .icon{width:34px;height:34px;color:var(--color-primary);flex-shrink:0;}
+.category h3{font-family:var(--font-body);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700;color:var(--color-text-muted);margin-bottom:.35rem;}
+.category p{color:var(--color-text);}
+.disclaimer{margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid var(--color-divider);font-size:.82rem;color:var(--color-text-faint);}
+.refresh-btn{margin-top:1.5rem;display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.3rem;border-radius:var(--radius-full);border:1px solid var(--color-border);font-size:.9rem;font-weight:600;}
+.refresh-btn:hover{border-color:var(--color-primary);color:var(--color-primary);}
+.result-actions{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem;}
+.download-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:var(--radius-full);border:1px solid var(--color-primary);color:var(--color-primary);background:var(--color-surface);flex-shrink:0;}
+.download-btn:hover{background:var(--color-primary);color:var(--color-text-inverse);}
+.download-btn:disabled{opacity:.6;cursor:wait;}
+.download-btn svg{width:18px;height:18px;}
+.download-btn.is-loading svg{animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+
+.matcher-section{padding-block:clamp(2rem,5vw,3.5rem);border-top:1px solid var(--color-divider);}
+.matcher-section h2{font-size:clamp(1.5rem,1.2rem + 1vw,2rem);margin-bottom:.5rem;}
+.matcher-section > .wrap > p.lede-sub{color:var(--color-text-muted);margin-bottom:2rem;max-width:60ch;}
+.matcher-card{padding:clamp(1.5rem,4vw,2.5rem);display:grid;gap:1.5rem;}
+.matcher-selects{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:end;}
+.matcher-vs{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--radius-full);background:var(--color-primary-highlight);color:var(--color-primary);font-weight:700;font-size:.8rem;margin-top:1.4rem;}
+.matcher-selects .form-row select{padding:.85rem 1rem;border-radius:var(--radius-md);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text);font-size:1rem;width:100%;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6459' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;}
+.matcher-submit{justify-self:start;padding:.9rem 1.8rem;border-radius:var(--radius-full);background:var(--color-primary);color:var(--color-text-inverse);font-weight:600;font-size:1rem;box-shadow:var(--shadow-sm);}
+.matcher-submit:hover{background:var(--color-primary-hover);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.matcher-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+#loveMatchView{display:none;}
+.lovematch-hero{padding-block:clamp(3rem,7vw,5rem) clamp(1.5rem,4vw,2.5rem);}
+.lovematch-back{display:inline-flex;align-items:center;gap:.5rem;font-size:.9rem;font-weight:600;color:var(--color-text-muted);margin-bottom:1.5rem;}
+.lovematch-back:hover{color:var(--color-primary);}
+.lovematch-pair{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:2rem;flex-wrap:wrap;}
+.lovematch-sign{display:flex;flex-direction:column;align-items:center;gap:.5rem;text-align:center;}
+.lovematch-sign .badge{width:64px;height:64px;border-radius:var(--radius-full);background:var(--color-primary-highlight);color:var(--color-primary);display:flex;align-items:center;justify-content:center;}
+.lovematch-sign .badge svg{width:34px;height:34px;}
+.lovematch-sign .name{font-family:var(--font-display);font-weight:700;font-size:1.15rem;}
+.lovematch-broken-heart{width:32px;height:32px;color:var(--color-primary);flex-shrink:0;}
+.lovematch-score{text-align:center;margin-bottom:2rem;}
+.lovematch-score .pct{font-family:var(--font-display);font-size:clamp(3rem,2rem + 4vw,5rem);color:var(--color-primary);font-weight:700;line-height:1;}
+.lovematch-score .label{color:var(--color-text-muted);font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-top:.5rem;}
+.lovematch-body{max-width:68ch;margin-inline:auto;}
+.lovematch-lead-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--color-divider);}
+.lovematch-lead-row svg{width:26px;height:26px;color:var(--color-primary);flex-shrink:0;}
+.lovematch-lead-row p.lead{font-family:var(--font-display);font-size:1.25rem;color:var(--color-primary);font-weight:700;margin:0;}
+.lovematch-reason{display:flex;gap:.9rem;align-items:flex-start;padding-block:.85rem;border-bottom:1px solid var(--color-divider);}
+.lovematch-reason:last-child{border-bottom:none;}
+.lovematch-reason .rbadge{width:32px;height:32px;border-radius:var(--radius-full);background:var(--color-primary-highlight);color:var(--color-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem;}
+.lovematch-reason .rbadge svg{width:17px;height:17px;}
+.lovematch-reason .rtext p{margin:0;color:var(--color-text);}
+.lovematch-reason .rtext .rtag{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:.3rem;}
+.lovematch-footer-note{display:flex;align-items:center;gap:.6rem;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--color-divider);color:var(--color-text-faint);font-size:.82rem;}
+.lovematch-footer-note svg{width:16px;height:16px;flex-shrink:0;color:var(--color-text-faint);}
+
+.grid-section{padding-block:clamp(2rem,5vw,3.5rem);border-top:1px solid var(--color-divider);}
+.grid-section h2{font-size:clamp(1.5rem,1.2rem + 1vw,2rem);margin-bottom:.5rem;}
+.grid-section > .wrap > p{color:var(--color-text-muted);margin-bottom:2rem;}
+.signs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:1rem;align-items:start;}
+.sign-chip{border-radius:var(--radius-lg);overflow:hidden;}
+.sign-chip-header{width:100%;padding:1.1rem;border-radius:var(--radius-lg);display:flex;align-items:center;gap:.75rem;text-align:left;}
+.sign-chip-header svg{width:26px;height:26px;color:var(--color-primary);flex-shrink:0;}
+.sign-chip-header .name{font-weight:600;font-size:.95rem;}
+.sign-chip-header .dates{font-size:.78rem;color:var(--color-text-muted);}
+.sign-chip-header .chevron{margin-left:auto;width:18px;height:18px;color:var(--color-text-faint);flex-shrink:0;transition:transform var(--transition-interactive);}
+.sign-chip[aria-expanded="true"] .chevron{transform:rotate(180deg);}
+.sign-chip[aria-expanded="true"] .sign-chip-header{color:var(--color-primary);}
+.sign-chip-panel{max-height:0;overflow:hidden;transition:max-height 280ms cubic-bezier(0.16,1,0.3,1);}
+.sign-chip-panel-inner{padding:0 1.1rem 1.1rem 1.1rem;}
+.sign-chip-panel-inner p{font-size:.85rem;color:var(--color-text-muted);margin-bottom:.5rem;}
+.trait-list{display:grid;gap:.5rem;}
+.trait-item{display:flex;gap:.55rem;align-items:flex-start;font-size:.88rem;color:var(--color-text);}
+.trait-item svg{width:14px;height:14px;color:var(--color-primary);flex-shrink:0;margin-top:.3rem;}
+
+footer.site{padding-block:2.5rem;border-top:1px solid var(--color-divider);color:var(--color-text-faint);font-size:.85rem;text-align:center;}
+
+@media (max-width:600px){
+  .month-tag{margin-left:0;}
+  .category{grid-template-columns:1fr;}
+  .category .icon{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="top-left-controls">
+  <button type="button" class="tarot-nav-btn" id="tarotNavBtn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2" width="12" height="18" rx="1.5" transform="rotate(-8 10 11)"/><rect x="8" y="4" width="12" height="18" rx="1.5" transform="rotate(8 14 13)"/></svg>
+    Tarot
+  </button>
+  <button class="theme-toggle" data-theme-toggle aria-label="Přepnout na tmavý režim">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</div>
+
+<header class="site">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;">
+    <div class="logo" aria-label="Antihoroskop logo">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M19 5a11 11 0 100 22 9 9 0 010-22z" stroke-linejoin="round"/>
+        <path d="M23 9l1.5 3.2L28 13.5l-3.5 1.3L23 18l-1.5-3.2L18 13.5l3.5-1.3z" stroke-linejoin="round" fill="currentColor" stroke="none" opacity="0.85"/>
+      </svg>
+      <span>Antihoroskop</span>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker">Žádné hvězdy vám tu nepomůžou</p>
+    <h1>Horoskop, který <em>konečně</em> řekne pravdu.</h1>
+    <p class="lede">Zadejte datum narození a pohlaví a dostanete upřímnou, nekompromisně negativní předpověď na tento měsíc — bez pozitivního balastu, bez růžových brýlí.</p>
+  </div>
+</section>
+
+<section class="form-section">
+  <div class="wrap">
+    <form class="card form-card" id="antiForm" novalidate>
+      <div class="form-row">
+        <label for="birthdate">Datum narození</label>
+        <input type="date" id="birthdate" name="birthdate" required>
+        <p class="error-msg" id="dateError">Zadejte platné datum narození, prosím.</p>
+      </div>
+      <div class="form-row">
+        <label id="genderLabel">Pohlaví</label>
+        <div class="gender-group" role="group" aria-labelledby="genderLabel">
+          <button type="button" class="gender-btn" data-gender="muž" aria-pressed="false">Muž</button>
+          <button type="button" class="gender-btn" data-gender="žena" aria-pressed="false">Žena</button>
+          <button type="button" class="gender-btn" data-gender="jiné" aria-pressed="false">Jiné / nechci uvádět</button>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">Zjistit tu nejhorší pravdu</button>
+    </form>
+  </div>
+</section>
+
+<section class="result-section" id="resultSection">
+  <div class="wrap">
+    <article class="card result-card" id="resultCard">
+      <div class="result-top">
+        <div class="sign-badge" id="signBadge"></div>
+        <div>
+          <h2 id="signName"></h2>
+          <p class="result-meta" id="resultMeta"></p>
+        </div>
+        <span class="month-tag" id="monthTag"></span>
+      </div>
+      <p class="verdict" id="verdictText"></p>
+      <div class="category-list" id="categoryList"></div>
+      <p class="disclaimer">Antihoroskop je čistě zábavný projekt. Žádná hvězda, planeta ani numerolog nenese odpovědnost za váš pokažený měsíc — to zvládnete i sami.</p>
+      <div class="result-actions">
+        <button class="refresh-btn" id="refreshBtn" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Zkusit jinou variantu neštěstí
+        </button>
+        <button class="download-btn" id="downloadBtn" type="button" aria-label="Stáhnout predikci jako obrázek" title="Stáhnout jako obrázek">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13M7 11l5 5 5-5M5 21h14"/></svg>
+        </button>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="matcher-section">
+  <div class="wrap">
+    <h2>Hodíte se k sobě? (antiláska)</h2>
+    <p class="lede-sub">Spoiler: nejspíš ne. Vyberte dvě znamení a dozvíte se přesně, proč by z toho vztahu stejně nic nebylo.</p>
+    <div class="card matcher-card">
+      <div class="matcher-selects">
+        <div class="form-row">
+          <label for="matchSignA">První znamení</label>
+          <select id="matchSignA"></select>
+        </div>
+        <div class="matcher-vs">VS</div>
+        <div class="form-row">
+          <label for="matchSignB">Druhé znamení</label>
+          <select id="matchSignB"></select>
+        </div>
+      </div>
+      <button type="button" class="matcher-submit" id="matchSubmit">Zobrazit antilásku</button>
+    </div>
+  </div>
+</section>
+
+<section class="grid-section">
+  <div class="wrap">
+    <h2>Všech 12 znamení, samá špatná zpráva</h2>
+    <p>Text se automaticky obnovuje každý měsíc — únor bude jiné utrpení než srpen.</p>
+    <div class="signs-grid" id="signsGrid"></div>
+  </div>
+</section>
+</main>
+
+<main id="loveMatchView">
+<section class="lovematch-hero">
+  <div class="wrap">
+    <button type="button" class="lovematch-back" id="lovematchBack">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Zpět na antihoroskop
+    </button>
+    <div class="lovematch-pair" id="lovematchPair"></div>
+    <div class="lovematch-score">
+      <div class="pct" id="lovematchScore"></div>
+      <div class="label">Šance na fungující vztah</div>
+    </div>
+    <div class="card lovematch-body" style="padding:clamp(1.5rem,4vw,2.5rem);">
+      <div class="lovematch-lead-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20.5s-7.2-4.4-9.7-8.7C.6 8.4 3 4.8 6.6 4.8c2.1 0 3.7 1.3 4.7 2.8C12.3 6.1 13.9 4.8 16 4.8c3.6 0 6 3.6 4.3 7-1.1 2.1-3 4-5.2 5.6"/><path d="M13.2 8.6l-2 3.2 2.6 1.8-1.8 3 2.2 2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="lead" id="lovematchLead"></p>
+      </div>
+      <div id="lovematchText"></div>
+      <div class="lovematch-footer-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>Antiláska je čistě zábavná spekulace. Skutečné vztahy se řídí komunikací, ne polohou planet.</span>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<main id="tarotView">
+<section class="tarot-hero">
+  <div class="wrap">
+    <button type="button" class="tarot-back" id="tarotBack">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      Zpět na antihoroskop
+    </button>
+    <h1>Tarot, který <em>nic nezlepší</em>.</h1>
+    <p class="lede">Zamíchejte osud a vytáhněte kartu. Žádný výklad tu nebude povzbudivý — jen upřímný pohled na to, co vás čeká.</p>
+  </div>
+</section>
+
+<section class="tarot-draw-section">
+  <div class="wrap">
+    <div class="tarot-stage">
+      <button type="button" class="tarot-draw-btn" id="tarotDrawBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="12" height="18" rx="1.5" transform="rotate(-8 10 11)"/><rect x="8" y="4" width="12" height="18" rx="1.5" transform="rotate(8 14 13)"/></svg>
+        Vytáhnout kartu
+      </button>
+      <p class="tarot-deck-hint">20 karet, jedna náhodná odpověď — a žádná z nich vás nepotěší.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="tarot-overlay" id="tarotOverlay" role="dialog" aria-modal="true" aria-label="Vylosovaná tarotová karta">
+  <div class="tarot-overlay-inner">
+    <img class="tarot-card-visual" id="tarotCardVisual" src="" alt="" width="230" height="322" loading="lazy">
+    <p class="tarot-overlay-text" id="tarotOverlayText"></p>
+    <div class="tarot-overlay-actions">
+      <button type="button" class="tarot-overlay-draw-again" id="tarotDrawAgainBtn">Vytáhnout znovu</button>
+      <button type="button" class="tarot-overlay-close" id="tarotCloseBtn">Zavřít</button>
+    </div>
+    <p class="tarot-overlay-footnote">Tarot je zde čistě pro zábavu. Vaši budoucnost neurčují karty, ale to, co uděláte dál.</p>
+  </div>
+</div>
+
+<footer class="site">
+  <div class="wrap">Antihoroskop &mdash; protože ne každý den musí být skvělý. Vytvořeno pro zábavu.</div>
+</footer>
+
+<script>
+(function(){
+  const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+  let d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  r.setAttribute('data-theme',d);
+  t&&t.addEventListener('click',()=>{
+    d=d==='dark'?'light':'dark';
+    r.setAttribute('data-theme',d);
+    t.setAttribute('aria-label','Přepnout na '+(d==='dark'?'světlý':'tmavý')+' režim');
+    t.innerHTML=d==='dark'
+      ?'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      :'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  });
+})();
+
+const SIGNS=[
+  {id:'beran',name:'Beran',range:'21. 3. – 19. 4.',start:[3,21],end:[4,19],icon:'M16 6c-3 0-5 2-5 5 0 2 1 3 2 4M16 6c3 0 5 2 5 5 0 2-1 3-2 4M16 6V4M13 10a3 3 0 106 0'},
+  {id:'byk',name:'Býk',range:'20. 4. – 20. 5.',start:[4,20],end:[5,20],icon:'M9 10c0-3 2-5 4-5M23 10c0-3-2-5-4-5M12 12a5 5 0 1010 0c0-2-2-4-5-4s-5 2-5 4z'},
+  {id:'blizenci',name:'Blíženci',range:'21. 5. – 20. 6.',start:[5,21],end:[6,20],icon:'M9 4v20M9 4c3 2 3 4 0 6M9 14c3 2 3 4 0 6M23 4v20M23 4c-3 2-3 4 0 6M23 14c-3 2-3 4 0 6'},
+  {id:'rak',name:'Rak',range:'21. 6. – 22. 7.',start:[6,21],end:[7,22],icon:'M8 16a5 5 0 019-3M24 16a5 5 0 01-9 3M6 12a2 2 0 100 4M26 12a2 2 0 110 4'},
+  {id:'lev',name:'Lev',range:'23. 7. – 22. 8.',start:[7,23],end:[8,22],icon:'M11 8a5 5 0 1110 0c0 4-3 5-3 9a3 3 0 01-4 0c0-4-3-5-3-9zM21 20c2 1 3 3 2 5'},
+  {id:'panna',name:'Panna',range:'23. 8. – 22. 9.',start:[8,23],end:[9,22],icon:'M10 6v14a4 4 0 004 4M22 6v10M22 20a4 4 0 01-4 4h-2'},
+  {id:'vahy',name:'Váhy',range:'23. 9. – 22. 10.',start:[9,23],end:[10,22],icon:'M6 22h8M18 22h8M16 6v16M8 14a4 4 0 108 0M16 14a4 4 0 108 0'},
+  {id:'stir',name:'Štír',range:'23. 10. – 21. 11.',start:[10,23],end:[11,21],icon:'M6 8c2 0 4 2 4 6v6M14 8c2 0 4 2 4 6v6h4l2-3'},
+  {id:'strelec',name:'Střelec',range:'22. 11. – 21. 12.',start:[11,22],end:[12,21],icon:'M8 24L24 8M24 8h-7M24 8v7'},
+  {id:'kozoroh',name:'Kozoroh',range:'22. 12. – 19. 1.',start:[12,22],end:[1,19],icon:'M9 6v10a5 5 0 005 5M20 6v13M20 19a4 4 0 108 0v-3'},
+  {id:'vodnar',name:'Vodnář',range:'20. 1. – 18. 2.',start:[1,20],end:[2,18],icon:'M4 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0 4 3 6 0M4 20c2-3 4-3 6 0s4 3 6 0 4-3 6 0 4 3 6 0'},
+  {id:'ryby',name:'Ryby',range:'19. 2. – 20. 3.',start:[2,19],end:[3,20],icon:'M4 10c8 0 8 12 16 12M28 10c-8 0-8 12-16 12M4 20h24'}
+];
+
+const SIGN_TRAITS={
+  beran:["Notoricky netrpělivý a impulzivní – jedná dřív, než přemýšlí.","Vznětlivý a soutěživý až k vyčerpání okolí.","Sobecky si prosazuje svou vůli bez ohledu na ostatní.","Rychle ho nadchne cokoli nové a stejně rychle ho to zase omrzí."],
+  byk:["Pověstně tvrdohlavý – jednou rozhodnuto, navěky rozhodnuto.","Lpí na majetku a jistotách víc, než je zdrávo.","Pomalý na změny a alergický na cokoli nečekaného.","Umí být nepříjemně žárlivý a majetnický."],
+  blizenci:["Povrchní a nestálý – nikdy nevíte, kterého dvojníka právě potkáváte.","Mluví víc, než jedná, a slova často nemají váhu.","Snadno se nudí a stejně snadno opustí to, co začal.","Bývá vypočítavý a říká každému něco jiného."],
+  rak:["Přecitlivělý až na pokraj hysterie, urazí se kvůli ničemu.","Nadměrně lpí na minulosti a nedokáže ji pustit.","Náladový a nevyzpytatelný – nikdy nevíte, co čekat.","Uzavírá se do sebe a trestá okolí mlčením."],
+  lev:["Egocentrický a potřebuje být neustále obdivován.","Nesnese kritiku a hraje uraženou drama-queen.","Okatě předvádí svůj majetek a úspěchy, i když nemusí.","Tvrdohlavě si stojí za svým, i když je zjevně vedle."],
+  panna:["Přehnaně kritický k sobě i ke všem kolem.","Puntičkářský workoholik, který nedokáže relaxovat.","Věčně nespokojený perfekcionista, kterému nic není dost dobré.","Úzkostně kontroluje detaily a otravuje tím okolí."],
+  vahy:["Chronicky nerozhodný – neumí si vybrat ani mezi dvěma kávami.","Vyhýbá se konfliktům tak dlouho, až problém přeroste přes hlavu.","Povrchně příjemný, ale často neupřímný, jen aby se zalíbil.","Závislý na cizím názoru, protože vlastnímu nevěří."],
+  stir:["Podezíravý a mstivý – nic neodpustí a nic nezapomene.","Manipulativní a rád tahá za nitky ze stínu.","Nedokáže pustit staré křivdy, i když už dávno nikoho nezajímají.","Extrémně žárlivý a vlastnický ve vztazích."],
+  strelec:["Nezodpovědný dobrodruh, který uteče od problémů, ne k jejich řešení.","Netaktní přímost hraničí s hrubostí.","Slibuje víc, než je ochoten nebo schopen splnit.","Neklidný a nestálý – závazky ho děsí."],
+  kozoroh:["Pesimistický workoholik, pro kterého je práce důležitější než lidé.","Chladný a odměřený, city dává najevo jen zřídka.","Přehnaně ambiciózní na úkor všeho ostatního v životě.","Skeptický ke všemu novému a nedokáže se bavit bez plánu."],
+  vodnar:["Odtažitý samotář, který se emocím spíš vyhýbá než je řeší.","Rebeluje jen proto, aby rebeloval, i bez důvodu.","Nepředvídatelný do té míry, že mu nikdo nevěří.","Intelektuálně povýšený a citově nedostupný."],
+  ryby:["Věčný snílek, který utíká od reality místo jejího řešení.","Přehnaně obětavý až k sebezničení, nedokáže odmítat.","Chaoticky nespolehlivý a věčně zmatený v termínech.","Snadno podlehne sebelítosti a utápí se v smutku."]
+};
+
+function getSign(month,day){
+  for(const s of SIGNS){
+    const [sm,sd]=s.start,[em,ed]=s.end;
+    if(sm>em){ if((month===sm&&day>=sd)||(month===em&&day<=ed)) return s; }
+    else{ if((month===sm&&day>=sd)||(month===em&&day<=ed)||(month>sm&&month<em)) return s; }
+  }
+  return SIGNS[0];
+}
+
+function mulberry32(seed){
+  return function(){
+    seed|=0; seed=seed+0x6D2B79F5|0;
+    let t=Math.imul(seed^seed>>>15,1|seed);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return ((t^t>>>14)>>>0)/4294967296;
+  };
+}
+function hashStr(str){
+  let h=0;
+  for(let i=0;i<str.length;i++){h=Math.imul(31,h)+str.charCodeAt(i)|0;}
+  return h;
+}
+function pick(rng,arr){ return arr[Math.floor(rng()*arr.length)]; }
+
+const VERDICTS=[
+  "Tento měsíc se lépe rovnou schovejte.",
+  "Připravte se na měsíc, který si nebudete chtít pamatovat.",
+  "Vesmír vás tento měsíc ignoruje – a je to vzájemné zklamání.",
+  "Nic z toho, co plánujete, nedopadne podle plánu.",
+  "Tento měsíc je zkouška vaší tolerance k neúspěchu.",
+  "Hvězdy se tento měsíc otočily jinam. Chápeme je.",
+  "Čeká vás měsíc plný rozhodnutí, která budete litovat.",
+  "Optimismus si tento měsíc nechte pro jiné.",
+  "Tento měsíc bude jako špatně naladěné rádio – jen šum a rušení.",
+  "Kalendář vám tento měsíc nabídne víc problémů než dní.",
+  "Tentokrát to nebude o štěstí, ale o tom, jak málo ho máte.",
+  "Měsíc, který si zaslouží rovnou přeskočit.",
+  "I ta nejnižší očekávání budou tento měsíc příliš vysoká.",
+  "Tento měsíc se karma rozhodla vyrovnat účty – bohužel s vámi.",
+  "Nic velkého se nestane, jen spousta malých zklamání za sebou.",
+  "Tento měsíc raději nic neplánujte, ať nemáte co zrušit."
+];
+
+const LOVE=[
+  "Vaše vztahy tento měsíc nabírají směr přímo do zdi.",
+  "Kdo vás má rád, brzy zapochybuje, proč vlastně.",
+  "Romantika se tento měsíc vydala na dovolenou bez vás.",
+  "Očekávejte hádku o něco, na čem vám ve skutečnosti nezáleží.",
+  "Někdo blízký vás tento měsíc citelně zklame – a vy jeho.",
+  "Osamělost bude tento měsíc váš nejvěrnější společník.",
+  "Vaše zprávy zůstanou nepřečtené déle, než je zdrávo.",
+  "Flirtování tento měsíc skončí jen rozpačitým tichem.",
+  "Staré nedořešené spory se tento měsíc vrátí v plné síle.",
+  "Někdo vám tento měsíc slíbí víc, než kdy splní.",
+  "Vaše trpělivost s blízkými bude tento měsíc na historickém minimu.",
+  "Společné plány se tento měsíc rozpadnou přesně v tu nejhorší chvíli.",
+  "Žárlivost nebo lhostejnost – tento měsíc si vyberete tu horší variantu.",
+  "Rande, na které jste se těšili, dopadne přesně tak, jak jste se bál.",
+  "Komunikace tento měsíc vázne přesně tam, kde by měla fungovat nejlépe.",
+  "Váš vztahový status se tento měsíc nezmění – jen se zhorší nálada kolem něj."
+];
+const WORK=[
+  "V práci vás čeká úkol, který nikdo jiný nechtěl.",
+  "Vaše nápady tento měsíc skončí v koši, ne v prezentaci.",
+  "Šéf si na vás tento měsíc konečně všimne – bohužel v ten špatný moment.",
+  "Termíny se posunou, ale ne ve váš prospěch.",
+  "Kolega si připíše vaši zásluhu a vy budete jen mlčky přikyvovat.",
+  "Motivace vás tento měsíc opustí přesně tehdy, kdy ji budete nejvíc potřebovat.",
+  "Porada, která měla trvat 15 minut, si vezme celé dopoledne.",
+  "Váš pracovní e-mail se tento měsíc stane synonymem stresu.",
+  "Přesčas, který jste neplánovali, se tento měsíc stane normou.",
+  "Vaše kariérní postup si tento měsíc dá pauzu – dlouhou pauzu.",
+  "Tiskárna, systém i internet vypoví službu přesně, když to nejméně potřebujete.",
+  "Zpětná vazba, kterou dostanete, bude bolet víc, než jste čekali.",
+  "Nový projekt vám tento měsíc přidělí práci navíc bez poděkování.",
+  "Vaše soustředění bude tento měsíc trvat tak dlouho jako jedna notifikace.",
+  "Kolegové budou tento měsíc mít lepší nápady rychleji než vy.",
+  "Pracovní stres si tento měsíc najde cestu i do vašich večerů."
+];
+const HEALTH=[
+  "Spánek bude tento měsíc vzácnější než klid v hlavě.",
+  "Bolest v kříži si tento měsíc řekne o vaši plnou pozornost.",
+  "Vaše předsevzetí cvičit skončí už u druhého tréninku.",
+  "Tělo si tento měsíc vezme přesně ten den dovolené, který jste plánovali jinak.",
+  "Únava se tento měsíc stane vaším druhým jménem.",
+  "Kávy bude potřeba víc, energie bude přesto míň.",
+  "Nachlazení si vybere ten nejnevhodnější týden.",
+  "Zrcadlo vám tento měsíc nebude dělat žádné komplimenty.",
+  "Stres se tento měsíc usadí přímo ve vašich ramenech a nehne se odtud.",
+  "Chuť na zdravé jídlo zmizí přesně tehdy, kdy ji budete nejvíc potřebovat.",
+  "Vaše energie bude tento měsíc kolísat rychleji než počasí na horách.",
+  "Migréna si tento měsíc najde cestu i do vašich nejlepších plánů.",
+  "Ranní vstávání bude tento měsíc bojem, který pravidelně prohráváte.",
+  "Sportovní odhodlání vydrží tak akorát do konce prvního týdne.",
+  "Imunita si tento měsíc vezme dovolenou přesně na tu nejhorší chvíli.",
+  "Duševní pohoda bude tento měsíc vzácnější než volný víkend."
+];
+const MONEY=[
+  "Peněženka bude tento měsíc hubenější, než čekáte.",
+  "Neplánovaný výdaj přijde přesně ve chvíli, kdy nejméně čekáte.",
+  "Slevy, které jste čekali, se tento měsíc nedostaví.",
+  "Účty přijdou dřív, výplata později.",
+  "Investice, do které jste věřili, si tento měsíc odpočine v minusu.",
+  "Impulzivní nákup vám tento měsíc zůstane jako trvalá připomínka.",
+  "Rozpočet, který jste si naplánovali, vydrží tak do poloviny měsíce.",
+  "Šetření tento měsíc prohraje na plné čáře s realitou.",
+  "Nečekaná oprava si tento měsíc vezme přesně tu částku, kterou jste šetřili.",
+  "Bankovní poplatky se tento měsíc objeví tam, kde jste je nečekali.",
+  "Výhodná nabídka, na kterou jste čekali, tento měsíc zase nedorazí.",
+  "Vaše finanční plány tento měsíc naruší jedna hloupá chyba v kalkulaci.",
+  "Účet za energie tento měsíc podá lekci z matematiky, kterou jste nechtěli.",
+  "Peníze, které jste chtěli ušetřit, tento měsíc padnou na něco zbytečného.",
+  "Půjčka nebo dluh se tento měsíc připomene ve nejnevhodnější chvíli.",
+  "Finanční klid si tento měsíc dejte z hlavy – nekoná se."
+];
+
+const SIGN_FLAVOR={
+  beran:[
+    "Uvidíte něco, co vás rozčílí, a než se nadechnete, už budete reagovat – lítost přijde až později.",
+    "Budete chtít mít poslední slovo v hádce, která vlastně nikam nevedla, a hlavně ne k vám.",
+    "Ta netrpělivost, kterou znáte sami od sebe, vás dovede k rozhodnutí, které bude potřeba brzy vzít zpátky.",
+    "Někdo vám bude chtít poradit, a vy to vezmete stejně jako vždycky – jako útok."
+  ],
+  byk:[
+    "Budete si stát za svým i ve chvíli, kdy vám bude jasné, že se pletete – jen to nikomu nepřiznáte.",
+    "Něco se změní, a vy budete mít pocit, jako by se vám sesypal celý svět.",
+    "Bude vás štvát, že musíte znovu řešit to samé, co jste už jednou 'vyřešili'.",
+    "Přijde chvíle, kdy budete chtít jen klid a jistotu, a dostanete přesně opak."
+  ],
+  blizenci:[
+    "Řeknete něco, co druhý den ani nebudete myslet, ale ono to stejně zůstane viset ve vzduchu.",
+    "Rozhodnete se pro něco a hned potom si budete přát, abyste se rozhodli jinak.",
+    "Budete mít pocit, že mluvíte hodně, ale málokdo se dozví, co si vlastně skutečně myslíte.",
+    "Něco vás nadchne na pár dní a pak to prostě přestane bavit, aniž byste přesně věděli proč."
+  ],
+  rak:[
+    "Něco malého vás zraní víc, než by mělo, a budete to nosit v sobě déle, než je zdrávo.",
+    "Budete si přehrávat starý rozhovor v hlavě, i když ho už dávno chcete pustit.",
+    "Ozve se pocit, že vás nikdo doopravdy nechápe, i když se snažíte to nedávat najevo.",
+    "Uzavřete se do sebe zrovna ve chvíli, kdy by vám nejvíc pomohlo mluvit."
+  ],
+  lev:[
+    "Někdo si vás nevšimne tak, jak byste čekali, a bude vás to bolet víc, než si přiznáte.",
+    "Budete chtít slyšet, že jste udělali dobře, a místo toho přijde jen ticho nebo kritika.",
+    "Přiznat, že jste se spletli, půjde tento měsíc mimořádně těžko.",
+    "Zjistíte, že ne všichni vás obdivují tak, jak jste si mysleli."
+  ],
+  panna:[
+    "Uděláte si dlouhý seznam věcí, které musíte zvládnout, a stejně budete mít pocit, že to nestačí.",
+    "Všimnete si chyby, kterou nikdo jiný neřeší, a ta drobnost vám nedá spát.",
+    "Budete tvrdí na sebe víc, než byste kdy byli na kohokoli jiného.",
+    "Pokusíte se mít vše pod kontrolou a přesně to vás vyčerpá nejvíc."
+  ],
+  vahy:[
+    "Budete se rozhodovat mezi dvěma možnostmi tak dlouho, až se rozhodne za vás okolí.",
+    "Řeknete něco, co si vlastně nemyslíte, jen abyste se vyhnuli hádce.",
+    "Zjistíte, že snaha vyhovět všem znamená hlavně to, že sami zůstanete nespokojení.",
+    "Někoho zklamete přesně v tu chvíli, kdy jste se snažili nezklamat nikoho."
+  ],
+  stir:[
+    "Něco vás napadne o někom blízkém a budete tomu věřit dřív, než si to ověříte.",
+    "Starou křivdu, kterou jste už měli pustit, si znovu vytáhnete – a bude to bolet znovu.",
+    "Budete cítit potřebu mít nad situací kontrolu, a to vás nakonec vyčerpá víc než samotný problém.",
+    "Někomu blízkému nedáte druhou šanci, i když by si ji možná zasloužil."
+  ],
+  strelec:[
+    "Slíbíte něco ve chvíli nadšení a pak budete hledat způsob, jak z toho vycouvat.",
+    "Uteče vás nutkání zmizet, zrovna když by bylo lepší zůstat a probrat to.",
+    "Řeknete něco příliš přímo a všimnete si toho až podle reakce druhého.",
+    "Zaváznete v rutině, která vás bude dusit rychleji, než čekáte."
+  ],
+  kozoroh:[
+    "Práci postavíte znovu na první místo, a všimnete si toho, co jste tím obětovali, až později.",
+    "Budete tvrdí sami na sebe za věc, kterou by vám jiný odpustil hned.",
+    "Přijde chvíle, kdy budete chtít vše naplánovat, a stejně se nic nepovede podle plánu.",
+    "Něco citového necháte úplně stranou, protože na to prostě 'nemáte čas'."
+  ],
+  vodnar:[
+    "Budete potřebovat být sami, a nikdo kolem to nebude chápat – ani vy sami úplně.",
+    "Uděláte něco proti proudu jen proto, abyste ukázali, že jste jiní.",
+    "Někdo se vás zeptá na pocity a vy nebudete vědět, co vlastně odpovědět.",
+    "Odtáhnete se od někoho blízkého přesně ve chvíli, kdy by stačilo zůstat."
+  ],
+  ryby:[
+    "Utečete do vlastní hlavy zrovna ve chvíli, kdy je potřeba řešit něco skutečného.",
+    "Slíbíte pomoc, na kterou nemáte sílu, a pak si budete připadat vinní za to, že jste to nezvládli.",
+    "Něco vás rozteskní víc, než by si to daná situace zasloužila.",
+    "Budete doufat, že se problém vyřeší sám, a mezitím se jen zhorší."
+  ]
+};
+
+const GENDER_LINES={
+  'muž':["Coby muž budete tento měsíc statisticky ještě víc ignorovat vlastní pocity, a bude to poznat.","Vaše okolí od vás bude tento měsíc čekat víc síly, než ve skutečnosti máte.","Tlak nezobrazovat slabost vás tento měsíc jen víc vyčerpá."],
+  'žena':["Coby žena budete tento měsíc řešit o starost víc, aniž by si toho kdokoli všiml.","Očekávání okolí budou tento měsíc vyšší než vaše chuť jim vyhovět.","Nespravedlivé nároky na vás tento měsíc citelně dolehnou."],
+  'jiné':["Vaše okolí vás tento měsíc bude nadále nesprávně zaškatulkovávat – s předvídatelně únavným výsledkem.","Nedostatek pochopení od okolí bude tento měsíc obzvlášť viditelný.","Cítit se nepochopeně bude tento měsíc vaší běžnou zkušeností."]
+};
+
+function monthKey(){
+  const now=new Date();
+  return {y:now.getFullYear(),m:now.getMonth()+1,label:now.toLocaleDateString('cs-CZ',{month:'long',year:'numeric'})};
+}
+
+function generatePrediction(sign,gender,variantSalt){
+  const {y,m,label}=monthKey();
+  const seedStr=sign.id+'|'+gender+'|'+y+'-'+m+(variantSalt?('|'+variantSalt):'');
+  const rng=mulberry32(hashStr(seedStr));
+  const flavorPool=SIGN_FLAVOR[sign.id]||[];
+  return {
+    monthLabel:label,
+    verdict:pick(rng,VERDICTS),
+    love:pick(rng,LOVE),
+    work:pick(rng,WORK),
+    health:pick(rng,HEALTH),
+    money:pick(rng,MONEY),
+    genderLine:pick(rng,GENDER_LINES[gender]||GENDER_LINES['jiné']),
+    signFlavor:flavorPool.length?pick(rng,flavorPool):null
+  };
+}
+
+const ICONS={
+  love:'<path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.5 1.2 4.5 2.7C12 6.2 13.5 5 15.5 5 19 5 21.5 8.5 20 12.5 18 16.65 12 21 12 21z"/>',
+  work:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/>',
+  health:'<path d="M12 2l1.5 4.5H18L14.5 9l1.3 4.5L12 11l-3.8 2.5L9.5 9 6 6.5h4.5z"/><circle cx="12" cy="17" r="4"/>',
+  money:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 013-2h0a2.5 2.5 0 010 5h-1a2.5 2.5 0 000 5h.5a2.5 2.5 0 003-2"/>',
+  flavor:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/>'
+};
+
+let currentSign=null, currentGender=null, currentBirthdate=null, variantCounter=0;
+
+function renderResult(sign,gender){
+  const pred=generatePrediction(sign,gender,variantCounter);
+  document.getElementById('signBadge').innerHTML='<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="'+sign.icon+'"/></svg>';
+  document.getElementById('signName').textContent=sign.name;
+  document.getElementById('resultMeta').textContent=sign.range+' • '+(gender.charAt(0).toUpperCase()+gender.slice(1));
+  document.getElementById('monthTag').textContent=pred.monthLabel;
+  document.getElementById('verdictText').textContent=pred.verdict;
+  const cats=[
+    {key:'love',title:'Vztahy',text:pred.love},
+    {key:'work',title:'Práce',text:pred.work},
+    {key:'health',title:'Zdraví',text:pred.health},
+    {key:'money',title:'Peníze',text:pred.money}
+  ];
+  if(pred.signFlavor) cats.push({key:'flavor',title:'Vaše povaha',text:pred.signFlavor});
+  cats.push({key:'work',title:'A nakonec',text:pred.genderLine});
+  document.getElementById('categoryList').innerHTML=cats.map(c=>
+    '<div class="category"><svg class="icon" data-key="'+c.key+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">'+ICONS[c.key]+'</svg><div><h3>'+c.title+'</h3><p>'+c.text+'</p></div></div>'
+  ).join('');
+  document.getElementById('resultSection').style.display='block';
+  document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+document.querySelectorAll('.gender-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.gender-btn').forEach(b=>b.setAttribute('aria-pressed','false'));
+    btn.setAttribute('aria-pressed','true');
+  });
+});
+
+document.getElementById('antiForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const dateVal=document.getElementById('birthdate').value;
+  const genderBtn=document.querySelector('.gender-btn[aria-pressed="true"]');
+  const errorEl=document.getElementById('dateError');
+  if(!dateVal||!genderBtn){
+    errorEl.style.display='block';
+    errorEl.textContent=!dateVal?'Zadejte platné datum narození, prosím.':'Vyberte prosím pohlaví.';
+    return;
+  }
+  errorEl.style.display='none';
+  const [yy,mm,dd]=dateVal.split('-').map(Number);
+  currentSign=getSign(mm,dd);
+  currentGender=genderBtn.dataset.gender;
+  currentBirthdate=dd.toString().padStart(2,'0')+'. '+mm.toString().padStart(2,'0')+'. '+yy;
+  variantCounter=0;
+  renderResult(currentSign,currentGender);
+});
+
+document.getElementById('refreshBtn').addEventListener('click',()=>{
+  if(!currentSign) return;
+  variantCounter++;
+  renderResult(currentSign,currentGender);
+});
+
+function wrapCanvasText(ctx,text,x,y,maxWidth,lineHeight){
+  const words=text.split(' ');
+  let line='';
+  let lines=[];
+  for(let i=0;i<words.length;i++){
+    const testLine=line+words[i]+' ';
+    if(ctx.measureText(testLine).width>maxWidth&&i>0){
+      lines.push(line.trim());
+      line=words[i]+' ';
+    }else{
+      line=testLine;
+    }
+  }
+  lines.push(line.trim());
+  lines.forEach((l,idx)=>ctx.fillText(l,x,y+idx*lineHeight));
+  return lines.length*lineHeight;
+}
+
+function drawRoundedRect(ctx,x,y,w,h,r){
+  if(ctx.roundRect){ctx.beginPath();ctx.roundRect(x,y,w,h,r);return;}
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+function drawSvgIcon(ctx,pathData,cx,cy,size,color,strokeWidth){
+  ctx.save();
+  ctx.translate(cx-size/2,cy-size/2);
+  ctx.scale(size/24,size/24);
+  const path=new Path2D(pathData);
+  ctx.strokeStyle=color;
+  ctx.lineWidth=strokeWidth||1.8;
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.stroke(path);
+  ctx.restore();
+}
+
+const ICON_PATHS={
+  love:'M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.5 1.2 4.5 2.7C12 6.2 13.5 5 15.5 5 19 5 21.5 8.5 20 12.5 18 16.65 12 21 12 21z',
+  work:'M3 7h18v13H3z M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2',
+  health:'M12 2l1.5 4.5H18L14.5 9l1.3 4.5L12 11l-3.8 2.5L9.5 9 6 6.5h4.5z M12 17a4 4 0 100-8 4 4 0 000 8z',
+  money:'M12 3a9 9 0 100 18 9 9 0 000-18z M12 7v10M9.5 9.5a2.5 2.5 0 013-2h0a2.5 2.5 0 010 5h-1a2.5 2.5 0 000 5h.5a2.5 2.5 0 003-2',
+  flavor:'M12 8a4 4 0 100 8 4 4 0 000-8z M4 21c0-4 3.5-7 8-7s8 3 8 7'
+};
+
+function drawResultToCanvas(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=isDark?'#15130f':'#f2efe9';
+  const surface=isDark?'#1c1a15':'#ffffff';
+  const textColor=isDark?'#ece6d9':'#221f1a';
+  const mutedColor=isDark?'#a89d89':'#6b6459';
+  const primary=isDark?'#d9564f':'#8a1f1f';
+  const primaryHighlight=isDark?'#3a2422':'#e3cccb';
+  const divider=isDark?'#2c281f':'#d9d2c4';
+
+  const width=640, padding=44, innerPad=28, iconBoxSize=36, textIndent=56;
+  const ctxMeasure=document.createElement('canvas').getContext('2d');
+
+  const catList=document.querySelectorAll('#categoryList .category');
+  const verdict=document.getElementById('verdictText').textContent;
+  const signName=document.getElementById('signName').textContent;
+  const genderLabel=currentGender?(currentGender.charAt(0).toUpperCase()+currentGender.slice(1)):'';
+  const birthLabel=currentBirthdate||'';
+
+  const catData=Array.from(catList).map(cat=>({
+    title:cat.querySelector('h3').textContent,
+    text:cat.querySelector('p').textContent,
+    key:cat.querySelector('svg').getAttribute('data-key')||'love'
+  }));
+
+  const contentWidth=width-padding*2;
+
+  ctxMeasure.font='400 15px General Sans, sans-serif';
+  let estimatedHeight=padding;
+  estimatedHeight+=92;
+  estimatedHeight+=28;
+  ctxMeasure.font='700 20px Boska, Georgia, serif';
+  const verdictLineCount=Math.ceil(ctxMeasure.measureText(verdict).width/(contentWidth-innerPad*2))||1;
+  estimatedHeight+=verdictLineCount*28+innerPad*2+28;
+  catData.forEach(c=>{
+    ctxMeasure.font='400 14.5px General Sans, sans-serif';
+    const lines=Math.ceil(ctxMeasure.measureText(c.text).width/(contentWidth-textIndent))||1;
+    estimatedHeight+=Math.max(iconBoxSize,lines*20+14)+22;
+  });
+  estimatedHeight+=48;
+
+  const canvas=document.createElement('canvas');
+  const scale=2;
+  canvas.width=width*scale;
+  canvas.height=estimatedHeight*scale;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(scale,scale);
+
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,width,estimatedHeight);
+
+  let y=padding;
+
+  const headerHeight=92;
+  drawRoundedRect(ctx,padding,y,contentWidth,headerHeight,16);
+  ctx.fillStyle=primaryHighlight;
+  ctx.fill();
+
+  ctx.font='700 11px General Sans, sans-serif';
+  ctx.fillStyle=primary;
+  ctx.textAlign='left';
+  ctx.fillText('DATUM NAROZENÍ',padding+innerPad,y+30);
+  ctx.font='700 22px Boska, Georgia, serif';
+  ctx.fillStyle=textColor;
+  ctx.fillText(birthLabel,padding+innerPad,y+60);
+
+  ctx.textAlign='right';
+  ctx.font='700 11px General Sans, sans-serif';
+  ctx.fillStyle=primary;
+  ctx.fillText('ZNAMENÍ',width-padding-innerPad,y+30);
+  ctx.font='700 22px Boska, Georgia, serif';
+  ctx.fillStyle=textColor;
+  ctx.fillText(signName,width-padding-innerPad,y+60);
+  ctx.textAlign='left';
+
+  ctx.font='400 12.5px General Sans, sans-serif';
+  ctx.fillStyle=mutedColor;
+  ctx.fillText(genderLabel,padding+innerPad,y+headerHeight-16);
+
+  y+=headerHeight+28;
+
+  const verdictBoxTop=y;
+  const verdictBoxHeight=verdictLineCount*28+innerPad*2;
+  drawRoundedRect(ctx,padding,verdictBoxTop,contentWidth,verdictBoxHeight,14);
+  ctx.fillStyle=surface;
+  ctx.fill();
+  ctx.strokeStyle=divider;
+  ctx.lineWidth=1;
+  drawRoundedRect(ctx,padding,verdictBoxTop,contentWidth,verdictBoxHeight,14);
+  ctx.stroke();
+  ctx.font='700 20px Boska, Georgia, serif';
+  ctx.fillStyle=primary;
+  wrapCanvasText(ctx,verdict,padding+innerPad,verdictBoxTop+innerPad+16,contentWidth-innerPad*2,28);
+  y=verdictBoxTop+verdictBoxHeight+28;
+
+  catData.forEach((c,idx)=>{
+    ctx.font='400 14.5px General Sans, sans-serif';
+    const lines=Math.ceil(ctxMeasure.measureText(c.text).width/(contentWidth-textIndent))||1;
+    const rowHeight=Math.max(iconBoxSize,lines*20+14);
+
+    drawRoundedRect(ctx,padding,y,iconBoxSize,iconBoxSize,10);
+    ctx.fillStyle=primaryHighlight;
+    ctx.fill();
+    drawSvgIcon(ctx,ICON_PATHS[c.key]||ICON_PATHS.love,padding+iconBoxSize/2,y+iconBoxSize/2,20,primary,1.7);
+
+    ctx.font='700 11px General Sans, sans-serif';
+    ctx.fillStyle=mutedColor;
+    ctx.fillText(c.title.toUpperCase(),padding+textIndent,y+13);
+
+    ctx.font='400 14.5px General Sans, sans-serif';
+    ctx.fillStyle=textColor;
+    wrapCanvasText(ctx,c.text,padding+textIndent,y+32,contentWidth-textIndent,20);
+
+    y+=rowHeight+22;
+    if(idx<catData.length-1){
+      ctx.strokeStyle=divider;
+      ctx.beginPath();ctx.moveTo(padding,y-11);ctx.lineTo(width-padding,y-11);ctx.stroke();
+    }
+  });
+
+  y+=6;
+  ctx.strokeStyle=divider;
+  ctx.beginPath();ctx.moveTo(padding,y);ctx.lineTo(width-padding,y);ctx.stroke();
+  y+=30;
+  ctx.font='700 13px Boska, Georgia, serif';
+  ctx.fillStyle=mutedColor;
+  ctx.textAlign='center';
+  ctx.fillText('☽ Antihoroskop',width/2,y);
+  ctx.textAlign='left';
+
+  return canvas;
+}
+
+document.getElementById('downloadBtn').addEventListener('click',function(){
+  const btn=this;
+  if(!currentSign) return;
+  btn.disabled=true;
+  btn.classList.add('is-loading');
+  try{
+    const canvas=drawResultToCanvas();
+    canvas.toBlob(blob=>{
+      if(!blob){btn.disabled=false;btn.classList.remove('is-loading');return;}
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      const monthSlug=(document.getElementById('monthTag').textContent||'predikce').trim().replace(/\s+/g,'-').toLowerCase();
+      a.download='antihoroskop-'+currentSign.id+'-'+monthSlug+'.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+      btn.disabled=false;
+      btn.classList.remove('is-loading');
+    },'image/png');
+  }catch(err){
+    btn.disabled=false;
+    btn.classList.remove('is-loading');
+  }
+});
+
+const signsGrid=document.getElementById('signsGrid');
+signsGrid.innerHTML=SIGNS.map((s,idx)=>{
+  const traits=SIGN_TRAITS[s.id]||[];
+  const traitsHtml=traits.map(t=>
+    '<div class="trait-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/></svg><span>'+t+'</span></div>'
+  ).join('');
+  return '<div class="card sign-chip" aria-expanded="false" id="chip-'+s.id+'">'
+    + '<button class="sign-chip-header" type="button" aria-controls="panel-'+s.id+'">'
+      + '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="'+s.icon+'"/></svg>'
+      + '<div><div class="name">'+s.name+'</div><div class="dates">'+s.range+'</div></div>'
+      + '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'
+    + '</button>'
+    + '<div class="sign-chip-panel" id="panel-'+s.id+'">'
+      + '<div class="sign-chip-panel-inner">'
+        + '<p>Co se o znamení '+s.name+' obecně říká (samozřejmě jen ta horší polovina pravdy):</p>'
+        + '<div class="trait-list">'+traitsHtml+'</div>'
+      + '</div>'
+    + '</div>'
+  + '</div>';
+}).join('');
+
+signsGrid.querySelectorAll('.sign-chip-header').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const chip=btn.closest('.sign-chip');
+    const panel=chip.querySelector('.sign-chip-panel');
+    const isOpen=chip.getAttribute('aria-expanded')==='true';
+    chip.setAttribute('aria-expanded',isOpen?'false':'true');
+    panel.style.maxHeight=isOpen?'0px':panel.scrollHeight+'px';
+  });
+});
+
+const matchSignA=document.getElementById('matchSignA');
+const matchSignB=document.getElementById('matchSignB');
+[matchSignA,matchSignB].forEach(sel=>{
+  sel.innerHTML=SIGNS.map(s=>'<option value="'+s.id+'">'+s.name+'</option>').join('');
+});
+matchSignB.selectedIndex=1;
+
+const INCOMPAT_CATEGORIES=[
+  {
+    key:'komunikace',
+    label:'Komunikace',
+    icon:'M21 11.5a8.5 8.5 0 01-11.9 7.8L3 21l1.7-6.1A8.5 8.5 0 1121 11.5z',
+    reasons:[
+      "Když se pohádáte, jeden hned chce probrat, co se stalo, a druhý potřebuje tři dny odstup – takže se stejně minete.",
+      "Napíšete si zprávu a čekáte odpověď déle, než by bylo zdrávo, a pak si to oba vyloží úplně jinak.",
+      "Po hádce si oba budete myslet, že jste to jasně řekli, a nikdo z vás ve skutečnosti neřekl nic.",
+      "Vtip, který jeden myslí neškodně, si druhý odnese jako osobní urážku a bude si to pamatovat týdny.",
+      "Slib 'probereme to, až budeme mít oba klid' se v realitě nikdy nesplní.",
+      "Jeden chce mluvit o pocitech hned, druhý potřebuje být sám – výsledek je vzájemné nedorozumění."
+    ]
+  },
+  {
+    key:'tempo',
+    label:'Životní tempo',
+    icon:'M12 8v4l3 3M12 3a9 9 0 100 18 9 9 0 000-18z',
+    reasons:[
+      "Jeden má hotový plán na víkend už ve středu, druhý ještě ve čtvrtek neví, co bude dělat.",
+      "Co je pro jednoho vzrušující výlet bez plánu, je pro druhého noc beze spánku ze strachu.",
+      "Jeden potřebuje mít každý den stejný, druhý se z rutiny začne dusit už po týdnu.",
+      "Rozhodnutí, které jeden udělá impulzivně za minutu, bude druhý zvažovat celý týden.",
+      "Jeden chce jet hned, druhý si ještě musí sbalit, zkontrolovat a přebalit – a hádka je na světě."
+    ]
+  },
+  {
+    key:'kontrola',
+    label:'Svoboda a kontrola',
+    icon:'M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z',
+    reasons:[
+      "Když se jeden zeptá 'kde jsi byl', druhý to slyší jako výslech, ne jako zájem.",
+      "Jeden chce vědět, s kým jde druhý ven, a druhý to považuje za zbytečnou kontrolu.",
+      "Večer o samotě si jeden potřebuje užít, druhý ho ihned interpretuje jako odmítnutí.",
+      "Snaha jednoho o blízkost narazí na potřebu druhého mít prostor jen pro sebe.",
+      "Volnost, kterou si jeden brání, druhý čte jako signál, že mu na vztahu nezáleží."
+    ]
+  },
+  {
+    key:'emoce',
+    label:'Emoční nesoulad',
+    icon:'M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.5 1.2 4.5 2.7C12 6.2 13.5 5 15.5 5 19 5 21.5 8.5 20 12.5 18 16.65 12 21 12 21z',
+    reasons:[
+      "Když je jednomu zle, chce o tom mluvit, druhý chce hlavně vyřešit problém a jde na věc – nesejdou se.",
+      "Jeden potřebuje slyšet 'mám tě rád' často, druhý si myslí, že to je jasné z toho, že tu ještě je.",
+      "Oba budete tvrdit, že jste v pořádku, a oba budete lhát.",
+      "Něco, co jednoho dojme k slzám, druhý sotva zaregistruje.",
+      "Snaha jednoho pochopit pocity druhého narazí na věty typu 'to je jen v hlavě'.",
+      "Jeden brečí u filmu, druhý se ptá, proč se z toho dělá drama."
+    ]
+  },
+  {
+    key:'hodnoty',
+    label:'Hodnoty a priority',
+    icon:'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M2 14h4M10 8h4M18 12h4',
+    reasons:[
+      "Jeden šetří na byt, druhý si právě koupil něco, co nutně nepotřeboval – a hádka o peníze je na spadnutí.",
+      "Pro jednoho je důležitá kariéra, pro druhého rodina, a nikdo neustoupí ani o kousek.",
+      "Co jeden považuje za úspěch, druhý vidí jako ztracený víkend u počítače.",
+      "Sobota strávená doma je pro jednoho odpočinek, pro druhého ztracený den.",
+      "Když padne slovo 'společné plány', každý si pod tím představí něco úplně jiného."
+    ]
+  },
+  {
+    key:'konflikt',
+    label:'Řešení konfliktů',
+    icon:'M13 2L3 14h7l-1 8 10-12h-7l1-8z',
+    reasons:[
+      "Malý problém necháte hnít tak dlouho, až se z něj stane velká hádka o něčem úplně jiném.",
+      "Když jeden řekne 'promiň', myslí to jako konec debaty, ne jako začátek řešení.",
+      "Jeden začne zvedat hlas, druhý odejde z místnosti – a nikdo se nic nedozví.",
+      "Ta samá hádka o nádobí nebo o pozdním příchodu se vrací každý druhý týden.",
+      "Kompromis u vás znamená hlavně to, že jeden z vás vždycky ustoupí víc.",
+      "Po hádce se tváříte, že je vše v pořádku, ale ve skutečnosti to jen tlačíte pod pokličku."
+    ]
+  },
+  {
+    key:'ego',
+    label:'Ego a soutěživost',
+    icon:'M12 2a5 5 0 015 5c0 2.76-2.24 5-5 5s-5-2.24-5-5a5 5 0 015-5zM6 21v-2a6 6 0 016-6h0a6 6 0 016 6v2',
+    reasons:[
+      "Ani jeden z vás nechce ustoupit první, i když je to o naprostou drobnost.",
+      "Oba čekáte, že ten druhý zavolá první po hádce – takže nezavolá nikdo.",
+      "Kdo má pravdu, u vás vyhraje nad tím, co je vlastně důležité pro vztah.",
+      "Přeháníte i to, kdo z vás dvou uvařil lepší večeři, natož něco skutečně důležitého.",
+      "Přiznat si nahlas 'spletl jsem se' vám oběma dělá větší problém, než by mělo."
+    ]
+  },
+  {
+    key:'napetí',
+    label:'Vzájemné napětí',
+    icon:'M12 2l2.5 7.5H22l-6 4.5 2.5 7.5-6.5-4.5L5.5 21.5 8 14 2 9.5h7.5z',
+    reasons:[
+      "Věc, která jednoho baví, druhého jen unaví – a po chvíli i naštve.",
+      "Jeden vidí ve všem šanci, druhý hned najde deset důvodů, proč to nepůjde.",
+      "Společný plán na víkend skončí tím, že jeden ho navrhne a druhý ho zboří jednou větou.",
+      "Vtip, kterému se jeden zasměje, druhého jen otráví a schválně ho ignoruje.",
+      "Chemie mezi vámi vyprchá rychle tam, kde chybí základní ohled na toho druhého."
+    ]
+  }
+];
+
+const INCOMPAT_LEADS=[
+  "Krátká odpověď: nefunguje to.",
+  "Astrologicky i logicky – katastrofa na spadnutí.",
+  "Antiláska v plné síle: nekompatibilita na první pohled.",
+  "Tohle spojení nemá šanci přežít ani první měsíc.",
+  "Vesmír vám tímto párováním dělá jasně za uši.",
+  "Kompatibilita na úrovni ohně a vody – hasit nemá cenu.",
+  "Tenhle vztah by potřeboval zázrak, ne horoskop.",
+  "I hvězdy si tady zakrývají očí."
+];
+
+
+
+function generateLoveMatch(signA,signB){
+  const {y,m}=monthKey();
+  const orderedIds=[signA.id,signB.id].sort();
+  const seedStr='lovematch|'+orderedIds[0]+'|'+orderedIds[1]+'|'+y+'-'+Math.ceil(m/12);
+  const rng=mulberry32(hashStr(seedStr));
+  const score=Math.floor(rng()*34)+2;
+  const reasonCount=4;
+  const catIdxUsed=new Set();
+  const picks=[];
+  while(picks.length<reasonCount && catIdxUsed.size<INCOMPAT_CATEGORIES.length){
+    const catIdx=Math.floor(rng()*INCOMPAT_CATEGORIES.length);
+    if(catIdxUsed.has(catIdx)) continue;
+    catIdxUsed.add(catIdx);
+    const cat=INCOMPAT_CATEGORIES[catIdx];
+    const reason=cat.reasons[Math.floor(rng()*cat.reasons.length)];
+    picks.push({label:cat.label,icon:cat.icon,text:reason});
+  }
+  const lead=INCOMPAT_LEADS[Math.floor(rng()*INCOMPAT_LEADS.length)];
+  return {score,picks,lead};
+}
+
+function renderLoveMatch(signA,signB){
+  const match=generateLoveMatch(signA,signB);
+  document.getElementById('lovematchPair').innerHTML=
+    '<div class="lovematch-sign"><div class="badge"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="'+signA.icon+'"/></svg></div><div class="name">'+signA.name+'</div></div>'
+    + '<svg class="lovematch-broken-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.5 1.2 4.5 2.7C12 6.2 13.5 5 15.5 5 19 5 21.5 8.5 20 12.5 18 16.65 12 21 12 21z"/><path d="M12 7l-1.5 3 3 2-2 3 2.5 3"/></svg>'
+    + '<div class="lovematch-sign"><div class="badge"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="'+signB.icon+'"/></svg></div><div class="name">'+signB.name+'</div></div>';
+  document.getElementById('lovematchScore').textContent=match.score+'%';
+  document.getElementById('lovematchLead').textContent=match.lead;
+  document.getElementById('lovematchText').innerHTML=match.picks.map(p=>
+    '<div class="lovematch-reason"><div class="rbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="'+p.icon+'"/></svg></div><div class="rtext"><span class="rtag">'+p.label+'</span><p>'+p.text+'</p></div></div>'
+  ).join('');
+}
+
+document.getElementById('matchSubmit').addEventListener('click',()=>{
+  const signA=SIGNS.find(s=>s.id===matchSignA.value);
+  const signB=SIGNS.find(s=>s.id===matchSignB.value);
+  renderLoveMatch(signA,signB);
+  document.getElementById('main').style.display='none';
+  document.getElementById('loveMatchView').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+document.getElementById('lovematchBack').addEventListener('click',()=>{
+  document.getElementById('loveMatchView').style.display='none';
+  document.getElementById('main').style.display='';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+const TAROT_CARDS=[{"name": "Mág", "text": "Máte pocit, že máte všechno pod kontrolou. Realita: jen žonglujete s věcmi, které vám kdykoli spadnou na hlavu. Ten trik s kartami, co jste si naplánovali, nikomu nevyjde – ani vám.", "img": "assets/tarot/mag.jpg"}, {"name": "Velekněžka", "text": "Intuice vám tentokrát mlčí, nebo možná křičí a vy ji ignorujete. Tajemství, které skrýváte, se stejně provalí – jen v nejhorší možný moment.", "img": "assets/tarot/veleknezka.jpg"}, {"name": "Císařovna", "text": "Hojnost, o které jste snili, se nekoná. Místo úrody čekejte spíš vyprázdněný účet a trůn, na kterém sedíte jen vy sami.", "img": "assets/tarot/cisarovna.jpg"}, {"name": "Císař", "text": "Snažíte se všechno kontrolovat a stavět pevné základy, jenže stavíte z kostek, které se za vámi sesypou dřív, než dostavíte poslední patro.", "img": "assets/tarot/cisar.jpg"}, {"name": "Velekněz", "text": "Čekáte moudrou radu shora. Dostanete jen prázdná slova od někoho, kdo neví o vašem životě víc než vy sami.", "img": "assets/tarot/veleknez.jpg"}, {"name": "Milenci", "text": "Volba mezi dvěma cestami vás čeká – a ať zvolíte kteroukoli, budete litovat. Propast mezi vámi a partnerem (nebo rozhodnutím) se jen prohloubí.", "img": "assets/tarot/milenci.jpg"}, {"name": "Vůz", "text": "Vypadá to na pohodovou jízdu vpřed, ale ve skutečnosti jen sedíte v kočáře, který řídí někdo jiný, a vy si to jen neuvědomujete.", "img": "assets/tarot/vuz.jpg"}, {"name": "Síla", "text": "Máte pocit vnitřní síly a kontroly nad situací (nebo nad šelmou ve vašem životě). Ve skutečnosti vás krotíte jen o vlásek – a to vlásek už se trhá.", "img": "assets/tarot/sila.jpg"}, {"name": "Poustevník", "text": "Hledáte odpovědi v samotě, ale čím dál jdete, tím víc jste ztraceni. Ruka, která se po vás natahuje, vám nepomůže – nebo jí nevěříte.", "img": "assets/tarot/poustevnik.jpg"}, {"name": "Kolo štěstí", "text": "Kolo se otáčí, ale nahoru se dostane vždycky někdo jiný. Vaše štěstí je tento měsíc pevně zaparkované na spodním díle kola.", "img": "assets/tarot/kolo_stesti.jpg"}, {"name": "Spravedlnost", "text": "Čekáte, že vše dostane, co si zaslouží. Váhy se ale vychýlí přesně v neprospěch vás – spravedlnost je slepá a tentokrát i vůči vám.", "img": "assets/tarot/spravedlnost.jpg"}, {"name": "Viselec", "text": "Jste zavěšeni v čekání, obklopeni nedokončenými úkoly (a nekonečným načítáním). Nic se nepohne, dokud si to sami neuvědomíte – a to bude trvat.", "img": "assets/tarot/viselec.jpg"}, {"name": "Smrt", "text": "Konec něčeho je nevyhnutelný, ale žádné nové výhonky nečekejte hned. Země je vyprahlá a to, co roste, brzy zase usychá.", "img": "assets/tarot/smrt.jpg"}, {"name": "Umírněnost", "text": "Snažíte se udržet rovnováhu a přelévat energii tam, kde je potřeba. Jenže přeléváte do prázdné nádoby – a rovnováha se vám rozlévá po podlaze.", "img": "assets/tarot/umirnenost.jpg"}, {"name": "Ďábel", "text": "Jste připoutáni k něčemu, čeho se nemůžete zbavit – závislosti, zlozvyku, nebo telefonu, do kterého civíte místo života. Řetězy jsou volnější, než myslíte, ale vy je stejně neuvolníte.", "img": "assets/tarot/dabel.jpg"}, {"name": "Věž", "text": "Něco, co jste dlouho stavěli, se tento měsíc zbortí – rychle, hlasitě a bez varování. Blesk už je na cestě.", "img": "assets/tarot/vez.jpg"}, {"name": "Hvězda", "text": "Naděje se line jako voda, ale přímo do trhliny, kterou nic nezacelí. I ta nejjasnější hvězda vás tentokrát nenavede správným směrem.", "img": "assets/tarot/hvezda.jpg"}, {"name": "Měsíc", "text": "Kráčíte labyrintem iluzí a stínů a nic není takové, jak se zdá. Cesta, po které jdete, vás jen zavede zpátky na začátek.", "img": "assets/tarot/mesic.jpg"}, {"name": "Slunce", "text": "Sluneční paprsky svítí, ale hřejí jen ty ostatní kolem vás. Vy zůstáváte ve stínu vlastního zatmění, i když je jasno.", "img": "assets/tarot/slunce.jpg"}, {"name": "Blázen", "text": "Stojíte na okraji propasti a chystáte se skočit bez rozmyslu – jako obvykle. Tentokrát vás dole nečeká žádné bezpečné přistání.", "img": "assets/tarot/blazen.jpg"}];
+
+function showView(id){
+  document.getElementById('main').style.display=id==='main'?'':'none';
+  document.getElementById('loveMatchView').style.display=id==='loveMatchView'?'block':'none';
+  document.getElementById('tarotView').style.display=id==='tarotView'?'block':'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.getElementById('tarotNavBtn').addEventListener('click',()=>{
+  document.getElementById('loveMatchView').style.display='none';
+  showView('tarotView');
+});
+
+document.getElementById('tarotBack').addEventListener('click',()=>{
+  showView('main');
+});
+
+function drawTarotCard(){
+  const card=TAROT_CARDS[Math.floor(Math.random()*TAROT_CARDS.length)];
+  document.getElementById('tarotCardVisual').src=card.img;
+  document.getElementById('tarotCardVisual').alt='Vylosovaná tarotová karta';
+  document.getElementById('tarotOverlayText').textContent=card.text;
+  const overlay=document.getElementById('tarotOverlay');
+  overlay.classList.add('is-active');
+}
+
+document.getElementById('tarotDrawBtn').addEventListener('click',drawTarotCard);
+document.getElementById('tarotDrawAgainBtn').addEventListener('click',drawTarotCard);
+document.getElementById('tarotCloseBtn').addEventListener('click',()=>{
+  document.getElementById('tarotOverlay').classList.remove('is-active');
+});
+document.getElementById('tarotOverlay').addEventListener('click',(e)=>{
+  if(e.target.id==='tarotOverlay'){
+    document.getElementById('tarotOverlay').classList.remove('is-active');
+  }
+});
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){
+    document.getElementById('tarotOverlay').classList.remove('is-active');
+  }
+});
+</script>
+</body>
+</html>
