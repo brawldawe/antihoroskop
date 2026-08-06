@@ -598,7 +598,8 @@ function hashStr(str){
 }
 function pick(rng,arr){ return arr[Math.floor(rng()*arr.length)]; }
 
-const VERDICTS=[
+const VERDICTS = [
+  // Původní hlášky
   "Tento měsíc se lépe rovnou schovejte.",
   "Připravte se na měsíc, který si nebudete chtít pamatovat.",
   "Vesmír vás tento měsíc ignoruje – a je to vzájemné zklamání.",
@@ -614,7 +615,14 @@ const VERDICTS=[
   "I ta nejnižší očekávání budou tento měsíc příliš vysoká.",
   "Tento měsíc se karma rozhodla vyrovnat účty – bohužel s vámi.",
   "Nic velkého se nestane, jen spousta malých zklamání za sebou.",
-  "Tento měsíc raději nic neplánujte, ať nemáte co zrušit."
+  "Tento měsíc raději nic neplánujte, ať nemáte co zrušit.",
+  
+  // Nově přidané hlášky (gramaticky a stylisticky upravené)
+  "I když se budete snažit, aby se vaše přání vyplnilo, čeká vás jen tvrdý návrat do reality.",
+  "Můžete předstírat, že je vám celá situace ukradená, ale v hloubi duše stejně marně doufáte ve změnu.",
+  "I když budete počítat s tím nejhorším možným scénářem, stejně se stane něco, co jste vůbec nečekali.",
+  "Až se ocitnete před rozhodnutím, spolehněte se, že si stejně vyberete tu nejhorší variantu.",
+  "Jakmile to začne vypadat, že se situace konečně zlepší, dostanete od života další facku."
 ];
 
 const LOVE=[
@@ -633,7 +641,13 @@ const LOVE=[
   "Žárlivost nebo lhostejnost – tento měsíc si vyberete tu horší variantu.",
   "Rande, na které jste se těšili, dopadne přesně tak, jak jste se bál.",
   "Komunikace tento měsíc vázne přesně tam, kde by měla fungovat nejlépe.",
-  "Váš vztahový status se tento měsíc nezmění – jen se zhorší nálada kolem něj."
+  "Váš vztahový status se tento měsíc nezmění – jen se zhorší nálada kolem něj.",
+  "Když už to bude vypadat, že jste našli lásku svého života, zjistíte, že druhá osoba Vás nepovažuje ani za blízkého kamaráda.",
+  "Budete se snažit udělat pro lásku první poslední, zatímco druhá osoba pro Vás neudělá vůbec nic. (i tak se budete snažit dál)",
+  "Nikdy si nenajdete lásku svého života, nikdy si vás nikdo nevšimne, zůstanete sami.",
+  "Budete nadále pokračovat ve své komfortní zóně, nikdy nikoho neoslovíte, nikdy si nikoho nenajdete, zůstanete sami.",
+  "Budete mít takový strach z odmínutí, že nikdy s nikým nezačnete konverzaci a nikdy si tak nikoho nenajdete." 
+   
 ];
 const WORK=[
   "V práci vás čeká úkol, který nikdo jiný nechtěl.",
@@ -651,8 +665,14 @@ const WORK=[
   "Nový projekt vám tento měsíc přidělí práci navíc bez poděkování.",
   "Vaše soustředění bude tento měsíc trvat tak dlouho jako jedna notifikace.",
   "Kolegové budou tento měsíc mít lepší nápady rychleji než vy.",
-  "Pracovní stres si tento měsíc najde cestu i do vašich večerů."
+  "Pracovní stres si tento měsíc najde cestu i do vašich večerů.",
+  "Všichni ve vašem okolí berou více jak vy, ale stejně s tím nic neuděláte a budete dále pracovat v práci, která vás vůbec nenaplňuje.",
+  "Nadále budete chodit do práce, která vás nebaví, nenaplňuje, ani za ní není moc peněz, a vy s tím vůbec nic neuděláte." ,
+  "Jste tak neschopní, že si ani nedojdete za šéfem říct si o vyšší mzdu, takže budete nadále pracovat za směšnou mzdu.",
+  "Jste tak nahraditelní, že kdybyste zítra do práce nepřišli, tak si toho ani nikdo nevšimne." ,
+  "Nikoho v práci nezajímate, všichni jenom předstíraj, že o vašem nudném životě chtějí vědět víc."
 ];
+   
 const HEALTH=[
   "Spánek bude tento měsíc vzácnější než klid v hlavě.",
   "Bolest v kříži si tento měsíc řekne o vaši plnou pozornost.",
@@ -669,8 +689,14 @@ const HEALTH=[
   "Ranní vstávání bude tento měsíc bojem, který pravidelně prohráváte.",
   "Sportovní odhodlání vydrží tak akorát do konce prvního týdne.",
   "Imunita si tento měsíc vezme dovolenou přesně na tu nejhorší chvíli.",
-  "Duševní pohoda bude tento měsíc vzácnější než volný víkend."
+  "Duševní pohoda bude tento měsíc vzácnější než volný víkend.",
+  "Řeknete, že příští den půjdete spát dřiv, ale deprese z toho, že ztratíte další část dne vás donutí jít zase spát pozdě.",
+  "Každodenní sezení v práci se na Vás nenávratně podepíše." ,
+  "Můžete se motivovat se začátkem cvičení jak chcete, stejně pro sebe nic neuděláte.",
+  "Motivovat se k cvičení je pro vás stejně platné jak motivovat se k tomu, že začnete jíst zdravě, úplně k ničemu.",
+  "Budete se točit furt v jednom bodě, nestane dávno očekáváné zlepšení, ale ani zhoršení, furt na nule, jako váš život."
 ];
+   
 const MONEY=[
   "Peněženka bude tento měsíc hubenější, než čekáte.",
   "Neplánovaný výdaj přijde přesně ve chvíli, kdy nejméně čekáte.",
@@ -687,8 +713,14 @@ const MONEY=[
   "Účet za energie tento měsíc podá lekci z matematiky, kterou jste nechtěli.",
   "Peníze, které jste chtěli ušetřit, tento měsíc padnou na něco zbytečného.",
   "Půjčka nebo dluh se tento měsíc připomene ve nejnevhodnější chvíli.",
-  "Finanční klid si tento měsíc dejte z hlavy – nekoná se."
+  "Finanční klid si tento měsíc dejte z hlavy – nekoná se.",
+  "Vaše impulzivní nákupy pro dokázání si, že jste na živu, opravdu nejsou pro vaši finanční situace správná volba.",
+  "Nikdy nebudete mít peníze na to vlastnit svoji vlastní nemovitost.",
+  "V dědickém řízení se celé vaše rodinné pouta rozpadnou.",
+  "Tento měsíc se na Vás usměje štěstí a najdete na ulici peníze. 5 Kč. Pro někoho málo, pro vás dost.,
 ];
+
+
 
 const SIGN_FLAVOR={
   beran:[
@@ -1115,7 +1147,12 @@ const INCOMPAT_CATEGORIES=[
       "Po hádce si oba budete myslet, že jste to jasně řekli, a nikdo z vás ve skutečnosti neřekl nic.",
       "Vtip, který jeden myslí neškodně, si druhý odnese jako osobní urážku a bude si to pamatovat týdny.",
       "Slib 'probereme to, až budeme mít oba klid' se v realitě nikdy nesplní.",
-      "Jeden chce mluvit o pocitech hned, druhý potřebuje být sám – výsledek je vzájemné nedorozumění."
+      "Jeden chce mluvit o pocitech hned, druhý potřebuje být sám – výsledek je vzájemné nedorozumění.",
+      "Budete si říkat, jak umíte spolu krásně komunikovat, jen abyste při větším konfliktu spolu už nikdy nepromluvili.",
+      "Neměli jste s kým komunikovat většinu svého žiovta, myslíte si, že to najednou s tímhle člověkem začne fungovat?",
+      "Komunikace neexistující, stejně jako budoucnost pro tento vztah.",
+      "Nic vypisovat a vysvětlovat nebudu, stejně jako vy a váš vztah.",
+      "Komunikace? Možná tak občasný lhaní o svých citech."
     ]
   },
   {
@@ -1207,6 +1244,7 @@ const INCOMPAT_CATEGORIES=[
 ];
 
 const INCOMPAT_LEADS=[
+  // Původní hlášky
   "Krátká odpověď: nefunguje to.",
   "Astrologicky i logicky – katastrofa na spadnutí.",
   "Antiláska v plné síle: nekompatibilita na první pohled.",
@@ -1214,8 +1252,16 @@ const INCOMPAT_LEADS=[
   "Vesmír vám tímto párováním dělá jasně za uši.",
   "Kompatibilita na úrovni ohně a vody – hasit nemá cenu.",
   "Tenhle vztah by potřeboval zázrak, ne horoskop.",
-  "I hvězdy si tady zakrývají očí."
+  "I hvězdy si tady zakrývají oči.",
+  
+  // Nově přidané hlášky
+  "Můžete se snažit jak chcete, stejně to nevyjde.",
+  "Ze začátku to bude vypadat pozitivně, škoda...",
+  "To, jak si myslíte, že vás vidí, není pravda.",
+  "Ne, opravdu to nevyjde. (I když se budete modlit.)",
+  "Horoskop vám nepomůže, stejně jako váš partner."
 ];
+
 
 
 
