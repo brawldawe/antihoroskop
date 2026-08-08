@@ -46,7 +46,7 @@ const SIGNS=[
 ];
 
 const SIGN_TRAITS={
-  beran:["Notoricky netrpělivý a impulzivní – jedná dřív, než přemýšlí.","Vznětlivý a soutěživý až k vyčerpání okolí.","Sobecky si prosazuje svou vůli bez ohledu na ostatní.","Rychle ho nadchne cokoli nové a stejně rychle ho to zase omrzí."],
+  beran:["Notoricky netrpělivý a impulzivní. Jedná dřív, než přemýšlí.","Vznětlivý a soutěživý až k vyčerpání okolí.","Nejdřív je hravý, a když to začne být zajímavé, najednou nic nechápe","Sobecky si prosazuje svou vůli bez ohledu na ostatní.","Rychle ho nadchne cokoli nové a stejně rychle ho to zase omrzí."],
   byk:["Pověstně tvrdohlavý – jednou rozhodnuto, navěky rozhodnuto.","Lpí na majetku a jistotách víc, než je zdrávo.","Pomalý na změny a alergický na cokoli nečekaného.","Umí být nepříjemně žárlivý a majetnický."],
   blizenci:["Povrchní a nestálý – nikdy nevíte, kterého dvojníka právě potkáváte.","Mluví víc, než jedná, a slova často nemají váhu.","Snadno se nudí a stejně snadno opustí to, co začal.","Bývá vypočítavý a říká každému něco jiného."],
   rak:["Přecitlivělý až na pokraj hysterie, urazí se kvůli ničemu.","Nadměrně lpí na minulosti a nedokáže ji pustit.","Náladový a nevyzpytatelný – nikdy nevíte, co čekat.","Uzavírá se do sebe a trestá okolí mlčením."],
@@ -55,18 +55,20 @@ const SIGN_TRAITS={
   vahy:["Chronicky nerozhodný – neumí si vybrat ani mezi dvěma kávami.","Vyhýbá se konfliktům tak dlouho, až problém přeroste přes hlavu.","Povrchně příjemný, ale často neupřímný, jen aby se zalíbil.","Závislý na cizím názoru, protože vlastnímu nevěří."],
   stir:["Podezíravý a mstivý – nic neodpustí a nic nezapomene.","Manipulativní a rád tahá za nitky ze stínu.","Nedokáže pustit staré křivdy, i když už dávno nikoho nezajímají.","Extrémně žárlivý a vlastnický ve vztazích."],
   strelec:["Nezodpovědný dobrodruh, který uteče od problémů, ne k jejich řešení.","Netaktní přímost hraničí s hrubostí.","Slibuje víc, než je ochoten nebo schopen splnit.","Neklidný a nestálý – závazky ho děsí."],
-  kozoroh:["Pesimistický workoholik, pro kterého je práce důležitější než lidé.","Chladný a odměřený, city dává najevo jen zřídka.","Přehnaně ambiciózní na úkor všeho ostatního v životě.","Skeptický ke všemu novému a nedokáže se bavit bez plánu."],
-  vodnar:["Odtažitý samotář, který se emocím spíš vyhýbá než je řeší.","Rebeluje jen proto, aby rebeloval, i bez důvodu.","Nepředvídatelný do té míry, že mu nikdo nevěří.","Intelektuálně povýšený a citově nedostupný."],
+  kozoroh:["Pesimistický workoholik, pro kterého je práce důležitější než lidé.","Příjme vás s otevřenou náručí, jen aby vás v zápětí mohl ingnorovat, jako byste neexistovali.","Chladný a odměřený, city dává najevo jen zřídka.","Přehnaně ambiciózní na úkor všeho ostatního v životě.","Skeptický ke všemu novému a nedokáže se bavit bez plánu."],
+  vodnar:["Odtažitý samotář, který se emocím spíš vyhýbá než je řeší.","Hraje si na hodného, zatímco v duchu doufá, že všichni kolem něj zmizí","Rebeluje jen proto, aby rebeloval, i bez důvodu.","Nepředvídatelný do té míry, že mu nikdo nevěří.","Intelektuálně povýšený a citově nedostupný."],
   ryby:["Věčný snílek, který utíká od reality místo jejího řešení.","Přehnaně obětavý až k sebezničení, nedokáže odmítat.","Chaoticky nespolehlivý a věčně zmatený v termínech.","Snadno podlehne sebelítosti a utápí se v smutku."]
 };
 
 const VERDICTS = [
   // Původní hlášky
   "Tento měsíc se lépe rovnou schovejte.",
+  "Je jedno, jaký je měsíc. Tenhle váš to taky není.",
   "Připravte se na měsíc, který si nebudete chtít pamatovat.",
   "Vesmír vás tento měsíc ignoruje – a je to vzájemné zklamání.",
   "Nic z toho, co plánujete, nedopadne podle plánu.",
   "Tento měsíc je zkouška vaší tolerance k neúspěchu.",
+  "Nic zajímavého tento měsíc nečekejte, takže vlastně váš průměrný život.",
   "Hvězdy se tento měsíc otočily jinam. Chápeme je.",
   "Čeká vás měsíc plný rozhodnutí, která budete litovat.",
   "Optimismus si tento měsíc nechte pro jiné.",
@@ -393,7 +395,7 @@ const TAROT_CARDS=[{"name": "Mág", "text": "Máte pocit, že máte všechno pod
 const DICE_RESULTS={
   1:"Ne.",
   2:"Skoro to vyšlo, stejně jako všechno o co jste v životě stáli.",
-  3:"Nic, stejně jako váš život.",
+  3:"Průměr takže vlastně nic, stejně jako váš život.",
   4:"Žolík nebo klaun, záleží co vy s tím uděláte.",
   5:"Tak blízko, skoro to vyšlo a nic by se stejně nestalo.",
   6:"Ano."
